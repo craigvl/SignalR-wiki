@@ -13,13 +13,12 @@ Websockets [webSockets]
 **Prerequisite**
 
 - IIS 8+
-- Latest version of any modern browser
+- Latest version of any modern browser, IE10+
 - CORS : Cross Resource Sharing Enabled
 
 ***web.config***
 
 ```
-Abstraction over negotiate protocol (AJAX long polling, html5 sockets)
 
   <system.webServer>
 
