@@ -1,3 +1,84 @@
+Q&A
+===
+
+Server side hub events (OnReconnected/OnDisconnected/OnConnected) not fired
+---------------------------------------------------------------------------
+
+**Solution**
+
+```
+hub = $.connection.myHub;
+            // dummy call to force the [OnConnected()] method on signalR hub
+            hub.client.foo = function () { };
+            $.connection.hub.start().done( ... )
+            
+```
+**Refs**
+
+ref: http://elbruno.com/2014/07/25/signalr-error-html-client-does-not-raise-onconnected-method-on-server-hub-2/
+
+
+DI not working
+--------------
+
+**Solution**
+
+
+
+Bootstrap/Unity Config
+
+```
+container.RegisterType<IHubActivator, UnityHubActivator>(new ContainerControlledLifetimeManager());
+GlobalHost.DependencyResolver.Register(typeof(IHubActivator), () => new UnityHubActivator(container));
+```
+
+UnityHubActivator.cs
+```
+using System;
+using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.Practices.Unity;
+
+namespace DerivcoApps.Alerter.WebApi.Infrastructure
+{
+  public class UnityHubActivator : IHubActivator
+  {
+    private readonly IUnityContainer _container;
+
+    public UnityHubActivator(IUnityContainer container)
+    {
+      _container = container;
+    }
+
+    public IHub Create(HubDescriptor descriptor)
+    {
+      if (descriptor == null)
+      {
+        throw new ArgumentNullException("descriptor");
+      }
+
+      if (descriptor.HubType == null)
+      {
+        return null;
+      }
+
+      object hub = _container.Resolve(descriptor.HubType) ?? Activator.CreateInstance(descriptor.HubType);
+      return hub as IHub;
+    }
+  }
+}
+```
+
+
+
+
+
+**Refs**
+
+ref: http://elbruno.com/2014/07/25/signalr-error-html-client-does-not-raise-onconnected-method-on-server-hub-2/
+
+
+
+
 Transport protocols
 ===================
 
